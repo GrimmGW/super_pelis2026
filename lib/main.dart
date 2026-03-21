@@ -13,10 +13,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.initialRoute,
       routes: AppRoutes.routes,
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData(
         appBarTheme: AppBarThemeData(
-          backgroundColor: Colors.redAccent,
-          centerTitle: true
+          backgroundColor: Colors.red,
+          centerTitle: true,
+          foregroundColor: Colors.black
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.red,
+          brightness: Brightness.dark
         )
       )
     );
