@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:super_pelis2026/models/movie.dart';
 
 class MovieDetailsScreen extends StatelessWidget {
    
-  const MovieDetailsScreen({Key? key}) : super(key: key);
+  const MovieDetailsScreen({super.key});
   
   @override
   Widget build(BuildContext context) {
 
-    final size = MediaQuery.of(context).size;
+    final Movie movieModal = ModalRoute.of(context)!.settings.arguments as Movie;
 
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          _CustomAppBar(),
+          _CustomAppBar(movie: movieModal,),
           SliverList(delegate: SliverChildListDelegate([
-            _PosterTitle(),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text('Sint cupidatat dolore dolore duis magna quis esse elit tempor pariatur. Est commodo excepteur reprehenderit Lorem reprehenderit labore cupidatat. Irure ex irure Lorem anim magna. Proident ex veniam nisi elit in. Irure cillum sint anim anim sint nisi reprehenderit sunt quis proident adipisicing tempor magna Lorem. Deserunt nulla laboris consequat nulla deserunt elit laborum nostrud deserunt Lorem mollit deserunt.', textAlign: TextAlign.justify,),
-            ),
+            _PosterTitle(movie: movieModal,),
+            _Overview(movie: movieModal,),
           ]))
         ],
       ),
@@ -26,9 +24,29 @@ class MovieDetailsScreen extends StatelessWidget {
   }
 }
 
+class _Overview extends StatelessWidget {
+
+  final Movie movie;
+
+  const _Overview({
+    required this.movie
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Text('${movie.overview}', textAlign: TextAlign.justify,),
+    );
+  }
+}
+
 class _PosterTitle extends StatelessWidget {
+
+  final Movie movie;
+
   const _PosterTitle({
-    super.key,
+    required this.movie
   });
 
   @override
@@ -43,26 +61,26 @@ class _PosterTitle extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: FadeInImage(
-              placeholder: AssetImage('assets/images/jar-loading.gif'), 
-              image: NetworkImage('https://placehold.co/400x800.png'),
+              placeholder: AssetImage('assets/images/no-image.jpg'), 
+              image: NetworkImage('${movie.fullPosterImg}'),
               fit: BoxFit.cover,
               height: 200,
             ),
           ),
           SizedBox(width: 20,),
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: size.width * 0.5),
+            constraints: BoxConstraints(maxWidth: size.width * 0.4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Nombre de la peli', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis,),
-                Text('Nombre original'),
+                Text('${movie.title}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis,),
+                Text('${movie.originalTitle}'),
                 SizedBox(height: 10,),
                 Row(
                   children: [
                     Icon(Icons.star_rounded),
                     SizedBox(width: 5,),
-                    Text('9.1/10')
+                    Text('${movie.voteAverage.round()}/10')
                   ],
                 )
               ],
@@ -75,8 +93,11 @@ class _PosterTitle extends StatelessWidget {
 }
 
 class _CustomAppBar extends StatelessWidget {
+
+  final Movie movie;
+
   const _CustomAppBar({
-    super.key,
+    required this.movie
   });
 
   @override
@@ -90,11 +111,11 @@ class _CustomAppBar extends StatelessWidget {
           width: double.infinity,
           alignment: Alignment.bottomCenter,
           color: Colors.black38,
-          child: Text('Nombre de la peli', maxLines: 2, overflow: TextOverflow.ellipsis,)
+          child: Text('${movie.title}', maxLines: 2, overflow: TextOverflow.ellipsis,)
         ),
         background: FadeInImage(
           placeholder: AssetImage('assets/images/jar-loading.gif'), 
-          image: NetworkImage('https://placehold.co/800x400.png'),
+          image: NetworkImage('${ movie.fullPosterImg }'),
           fit: BoxFit.cover,
         ),
       ),

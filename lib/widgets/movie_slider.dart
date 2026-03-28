@@ -1,9 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:super_pelis2026/models/models.dart';
 
-class MovieSlider extends StatelessWidget {
+class MovieSlider extends StatefulWidget {
+
+  final List<Movie> movie;
+  final Function onNextPage;
+  final String widgetName;
+
   const MovieSlider({
-    super.key,
+    super.key, 
+    required this.movie, 
+    required this.onNextPage, 
+    required this.widgetName,
   });
+
+  @override
+  State<MovieSlider> createState() => _MovieSliderState();
+}
+
+class _MovieSliderState extends State<MovieSlider> {
+
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener((){
+      if(scrollController.position.pixels >= scrollController.position.maxScrollExtent - 500){
+        print('Hemos llegado al final');
+        widget.onNextPage();
+      }
+    });
+
+    @override
+    void dispose() {
+      super.dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +49,13 @@ class MovieSlider extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text('Peliculas populares', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            child: Text(widget.widgetName, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
           ),
           Expanded(
             child: ListView.builder(
+              controller: scrollController,
               scrollDirection: Axis.horizontal,
-              itemCount: 10,
+              itemCount: widget.movie.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   height: 200,
@@ -33,13 +67,13 @@ class MovieSlider extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           print('Has seleccionado una peli');
-                          Navigator.pushNamed(context, '/details');
+                          Navigator.pushNamed(context, '/details', arguments: widget.movie[index]);
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14),
                           child: FadeInImage(
                             placeholder: AssetImage('assets/images/jar-loading.gif'), 
-                            image: NetworkImage('https://placehold.co/400x700.png'),
+                            image: NetworkImage('${widget.movie[index].fullPosterImg}'),
                             width: 130,
                             height: 170,
                             fit: BoxFit.cover,
@@ -47,7 +81,7 @@ class MovieSlider extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text('Este es el titulo', maxLines: 2, overflow: TextOverflow.ellipsis,)
+                      Text('${widget.movie[index].title}', maxLines: 2, overflow: TextOverflow.ellipsis,)
                     ],
                   ),
                 );
